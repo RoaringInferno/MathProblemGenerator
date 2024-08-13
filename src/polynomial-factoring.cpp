@@ -2,6 +2,9 @@
 
 #include "mprgen/number-gen.hpp"
 
+std::string generate_term_string(const mprgen::integer& coeff, const uint32_t& order);
+std::string generate_sign_string(const mprgen::integer& coeff);
+
 mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, mprgen::integer factor_min, mprgen::integer front_factor_max, mprgen::integer front_factor_min, uint32_t factor_count)
 {
     mprgen::IntegerGen factor_gen({factor_min, factor_max});
@@ -60,41 +63,6 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
         coefficients[order] += coeff; // Add to the coefficient
     } while (!carry); // If the carry bit is set left over
 
-    // Helper functions
-    auto generate_term_string = [](const mprgen::integer& coeff, const uint32_t& order) -> std::string // Generates a string for a term
-    {
-        if (coeff == 0)
-        {
-            return "";
-        }
-        if (coeff == 1)
-        {
-            if (order == 0)
-            {
-                return "1";
-            }
-            if (order == 1)
-            {
-                return "x";
-            }
-            return "x^" + std::to_string(order);
-        }
-        std::string coeff_str = std::to_string(std::abs(coeff));
-        if (order == 0)
-        {
-            return coeff_str;
-        }
-        if (order ==1)
-        {
-            return coeff_str + "x";
-        }
-        return coeff_str + "x^" + std::to_string(order);
-    };
-    auto generate_sign_string = [](const mprgen::integer& coeff) -> std::string // Generates a sign string
-    {
-        return coeff >= 0 ? " + " : " - ";
-    };
-
     // Constructing the solution
     std::string solution;
     struct factor_pair // Represents a factor and its front factor
@@ -127,7 +95,7 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
         }
     }
     // Constructing the problem
-    std::string problem = generate_term_string(coefficients[factor_count], factor_count);
+    std::string problem = (coefficients[factor_count] > 0 ? "" : "-") + generate_term_string(coefficients[factor_count], factor_count);
     for (uint32_t i = factor_count-1; i > 0; i--) // Construct the problem string
     {
         if (coefficients[i] == 0) { continue; } // Skip if the coefficient is 0
@@ -137,4 +105,39 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
     problem += generate_sign_string(coefficients[0]) + generate_term_string(coefficients[0], 0); // Append the constant term
 
     return mprgen::MathProblem(problem, solution);
+}
+
+std::string generate_term_string(const mprgen::integer &coeff, const uint32_t &order)
+{
+    if (coeff == 0)
+        {
+            return "";
+        }
+        if (coeff == 1 || coeff == -1)
+        {
+            if (order == 0)
+            {
+                return "1";
+            }
+            if (order == 1)
+            {
+                return "x";
+            }
+            return "x^" + std::to_string(order);
+        }
+        std::string coeff_str = std::to_string(std::abs(coeff));
+        if (order == 0)
+        {
+            return coeff_str;
+        }
+        if (order ==1)
+        {
+            return coeff_str + "x";
+        }
+        return coeff_str + "x^" + std::to_string(order);
+}
+
+std::string generate_sign_string(const mprgen::integer &coeff)
+{
+    return coeff >= 0 ? " + " : " - ";
 }
