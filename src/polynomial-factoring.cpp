@@ -4,34 +4,22 @@
 
 std::string generate_term_string(const mprgen::integer& coeff, const uint32_t& order);
 std::string generate_sign_string(const mprgen::integer& coeff);
+mprgen::integer generate_nonzero_factor(mprgen::IntegerGen& factor_gen);
 
 mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, mprgen::integer factor_min, mprgen::integer front_factor_max, mprgen::integer front_factor_min, uint32_t factor_count)
 {
     mprgen::IntegerGen factor_gen({factor_min, factor_max});
     mprgen::integer factors[factor_count];
-    for (uint64_t i = 0; i < factor_count; i++)
-    {
-        do // Ensure that the factor is not 0
-        {
-            factors[i] = factor_gen.generate();
-        } while (factors[i] == 0);
-    }
     mprgen::IntegerGen front_factor_gen({front_factor_min, front_factor_max});
     mprgen::integer front_factors[factor_count];
     for (uint64_t i = 0; i < factor_count; i++)
     {
-        do // Ensure that the factor is not 0
-        {
-            front_factors[i] = front_factor_gen.generate();
-        } while (front_factors[i] == 0);
+        factors[i] = generate_nonzero_factor(factor_gen);
+        front_factors[i] = generate_nonzero_factor(front_factor_gen);
     }
 
     // Setting coefficients
     mprgen::integer coefficients[factor_count+1];
-    for (uint64_t i = 0; i < factor_count+1; i++)
-    {
-        coefficients[i] = 0;
-    }
     bool x_multiplied[factor_count]; // Tracks which factors have used x and which haven't
     bool carry; // Binary adding, but manual TODO: (find a way to do this with addition later)
     do
@@ -140,4 +128,16 @@ std::string generate_term_string(const mprgen::integer &coeff, const uint32_t &o
 std::string generate_sign_string(const mprgen::integer &coeff)
 {
     return coeff >= 0 ? " + " : " - ";
+}
+
+mprgen::integer generate_nonzero_factor(mprgen::IntegerGen &factor_gen)
+{
+    while(true)
+    {
+        mprgen::integer factor = factor_gen.generate();
+        if (factor != 0)
+        {
+            return factor;
+        }
+    }
 }
