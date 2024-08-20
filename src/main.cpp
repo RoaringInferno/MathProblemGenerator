@@ -19,9 +19,9 @@ void polynomial(const generate::iterator_range_t& range)
 
 generate::iterator_range_t reserve(std::vector<generate::vector_t*>& problems, generate::problem_count_t count)
 {
-    generate::vector_t problem_set(count);
-    problems.push_back(&problem_set);
-    return {problem_set.begin(), problem_set.end()};
+    generate::vector_t* problem_set = new generate::vector_t(count);
+    problems.push_back(problem_set);
+    return {problem_set->begin(), problem_set->end()};
 }
 
 int main(int argc, char** argv)
