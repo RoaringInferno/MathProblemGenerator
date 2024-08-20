@@ -1,25 +1,41 @@
 #include "mprgen/math-problem.hpp"
 #include "mprgen/number-gen.hpp"
 
+#include "generate.hpp"
 #include "polynomial-factoring.hpp"
 
-int main()
+void polynomial(const generate::iterator_range_t& range)
 {
     const uint32_t factor_count = 2;
-    const uint32_t problem_count = 50;
-    std::vector<mprgen::MathProblem> problems(problem_count);
+    const mprgen::integer factor_max = 10;
+    const mprgen::integer factor_min = -10;
+    const mprgen::integer front_factor_max = 2;
+    const mprgen::integer front_factor_min = -2;
+    generate::polynomial_factoring::parameters params = {factor_max, factor_min, front_factor_max, front_factor_min, factor_count};
+    
 
-    for (uint32_t i = 0; i < problem_count; i++)
+    generate::polynomial_factoring::problem_set(params, range);
+}
+
+generate::iterator_range_t reserve(std::vector<generate::vector_t*>& problems, generate::problem_count_t count)
+{
+    generate::vector_t problem_set(count);
+    problems.push_back(&problem_set);
+    return {problem_set.begin(), problem_set.end()};
+}
+
+int main(int argc, char** argv)
+{
+    const uint32_t problem_count = 10;
+
+    std::vector<generate::vector_t*> problems;
+
+    generate::iterator_range_t range = reserve(problems, problem_count);
+    polynomial(range);
+
+    for (const generate::vector_t* problem_set : problems)
     {
-        problems[i] = generate::polynomial_factoring(
-            mprgen::integer(10),
-            mprgen::integer(-10),
-            mprgen::integer(2),
-            mprgen::integer(-2),
-            factor_count
-        );
+        ask(*problem_set);
     }
-
-    ask(problems);
     return 0;
 }

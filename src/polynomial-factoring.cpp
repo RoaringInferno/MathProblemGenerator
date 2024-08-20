@@ -6,28 +6,36 @@ std::string generate_term_string(const mprgen::integer& coeff, const uint32_t& o
 std::string generate_sign_string(const mprgen::integer& coeff);
 mprgen::integer generate_nonzero_factor(mprgen::IntegerGen& factor_gen);
 
-mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, mprgen::integer factor_min, mprgen::integer front_factor_max, mprgen::integer front_factor_min, uint32_t factor_count)
+mprgen::MathProblem generate::polynomial_factoring::problem(const generate::polynomial_factoring::parameters& params)
 {
-    mprgen::IntegerGen factor_gen({factor_min, factor_max});
-    mprgen::integer factors[factor_count];
-    mprgen::IntegerGen front_factor_gen({front_factor_min, front_factor_max});
-    mprgen::integer front_factors[factor_count];
-    for (uint64_t i = 0; i < factor_count; i++)
+    mprgen::IntegerGen factor_gen({params.factor_min, params.factor_max});
+    mprgen::integer factors[params.factor_count];
+    mprgen::IntegerGen front_factor_gen({params.front_factor_min, params.front_factor_max});
+    mprgen::integer front_factors[params.factor_count];
+    for (uint64_t i = 0; i < params.factor_count; i++)
     {
         factors[i] = generate_nonzero_factor(factor_gen);
         front_factors[i] = generate_nonzero_factor(front_factor_gen);
     }
 
     // Setting coefficients
-    mprgen::integer coefficients[factor_count+1];
-    bool x_multiplied[factor_count]; // Tracks which factors have used x and which haven't
+    mprgen::integer coefficients[params.factor_count+1];
+    for (uint64_t i = 0; i < params.factor_count+1; i++)
+    {
+        coefficients[i] = 0;
+    }
+    bool x_multiplied[params.factor_count]; // Tracks which factors have used x and which haven't
+    for (uint64_t i = 0; i < params.factor_count; i++)
+    {
+        x_multiplied[i] = false;
+    }
     bool carry; // Binary adding, but manual TODO: (find a way to do this with addition later)
     do
     {
         mprgen::integer coeff = 1;
         carry = true;
         uint32_t order = 0;
-        for (uint64_t i = 0; i < factor_count; i++)
+        for (uint64_t i = 0; i < params.factor_count; i++)
         {
             if (!x_multiplied[i])
             {
@@ -70,7 +78,7 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
         return fstr;
     };
     std::unordered_map<std::string, uint32_t> factor_map; // Maps factor strings to their exponents
-    for (uint64_t i = 0; i < factor_count; i++) // Construct the factor map
+    for (uint64_t i = 0; i < params.factor_count; i++) // Construct the factor map
     {
         factor_map[generate_factor_string({front_factors[i], factors[i]})]++;
     }
@@ -83,8 +91,8 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
         }
     }
     // Constructing the problem
-    std::string problem = (coefficients[factor_count] > 0 ? "" : "-") + generate_term_string(coefficients[factor_count], factor_count);
-    for (uint32_t i = factor_count-1; i > 0; i--) // Construct the problem string
+    std::string problem = (coefficients[params.factor_count] > 0 ? "" : "-") + generate_term_string(coefficients[params.factor_count], params.factor_count);
+    for (uint32_t i = params.factor_count-1; i > 0; i--) // Construct the problem string
     {
         if (coefficients[i] == 0) { continue; } // Skip if the coefficient is 0
         std::string coeff_str = generate_sign_string(coefficients[i])+ generate_term_string(coefficients[i], i); // Generate the term string
@@ -93,6 +101,14 @@ mprgen::MathProblem generate::polynomial_factoring(mprgen::integer factor_max, m
     problem += generate_sign_string(coefficients[0]) + generate_term_string(coefficients[0], 0); // Append the constant term
 
     return mprgen::MathProblem(problem, solution);
+}
+
+void generate::polynomial_factoring::problem_set(const generate::polynomial_factoring::parameters& params, const generate::iterator_range_t& range)
+{
+    for (generate::problem_iterator_t it = range.begin; it != range.end; it++)
+    {
+        *it = problem(params);
+    }
 }
 
 std::string generate_term_string(const mprgen::integer &coeff, const uint32_t &order)
