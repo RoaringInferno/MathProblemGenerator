@@ -3,6 +3,7 @@
 
 #include "generate.hpp"
 #include "polynomial-factoring.hpp"
+#include "daemon.hpp"
 
 void polynomial(const generate::iterator_range_t& range)
 {
@@ -21,11 +22,23 @@ generate::iterator_range_t reserve(std::vector<generate::vector_t*>& problems, g
 {
     generate::vector_t* problem_set = new generate::vector_t(count);
     problems.push_back(problem_set);
-    return {problem_set->begin(), problem_set->end()};
+    return generate::iterator_range(*problem_set);
 }
 
 int main(int argc, char** argv)
 {
+    std::vector<std::string> arguments(argc-1);
+    for (unsigned int i = 1; i < argc; i++)
+    {
+        arguments[i-1] = std::string(argv[i]);
+    }
+    
+    Daemon master;
+    master.execute(arguments);
+    master.cleanup_spawn();
+    master.ask();
+
+    /*
     const uint32_t problem_count = 10;
 
     std::vector<generate::vector_t*> problems;
@@ -36,6 +49,6 @@ int main(int argc, char** argv)
     for (const generate::vector_t* problem_set : problems)
     {
         ask(*problem_set);
-    }
+    }*/
     return 0;
 }

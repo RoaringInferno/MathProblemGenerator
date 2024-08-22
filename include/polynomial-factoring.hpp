@@ -11,13 +11,15 @@ namespace generate
 {
     namespace polynomial_factoring
     {
+        typedef unsigned short factor_count_t;
+
         struct parameters
         {
             mprgen::integer factor_max;
             mprgen::integer factor_min;
             mprgen::integer front_factor_max;
             mprgen::integer front_factor_min;
-            problem_count_t factor_count;
+            factor_count_t factor_count;
         };
 
         mprgen::MathProblem problem(

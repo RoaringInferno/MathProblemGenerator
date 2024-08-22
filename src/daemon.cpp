@@ -1,63 +1,123 @@
 #include "daemon.hpp"
 
-// Defining all setting values
-#define H SettingStringHash::hash_function
+#include "mprgen/math-problem.hpp"
 
-const std::unordered_map<SettingStringHash::type_t, daemon_settings::value_t> all_settings = {
-    // Polynomial Factoring
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-front-factor-max"), 2}, // The largest number that will appear as the front coefficient in any factor
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-front-factor-min"), -2}, // The smallest number that will appear as the front coefficient in any factor
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-factor-max"), 10}, // The largest number that will appear as the loose number in any factor
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-factor-min"), -10}, // The smallest number that will appear as the loose number in any factor
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-factor-count"), 2}, // The number of factors each problem will have (and thus the order of the problem)
+#include <iostream>
+#include <string_view>
 
-    // Threading Thresholds
-    // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
-    {H(ProcessStringHash::PROCESS_NAME[ProcessStringHash::polynomial_factoring] + "-threading-threshold"), 100},
+using namespace std::literals::string_view_literals; // To get access to the ""sv operator
 
-    // General Settings (I put them at the bottom so I wouldn't have to worry about commas ngl)
-    {H("problem-count"), 10} // The amount of problems that are created every batch
-};
-const std::unordered_map<SettingStringHash::type_t, daemon_settings::bool_value_t> all_bool_settings = {
-    {H("force-threaded"), false}, // Forces the program to generate in parallel. Conflicts with "force-unthreaded"
-    {H("force-unthreaded"), false} // Forces the program to generate in series. Conflicts with "force-threaded"
-};
-
-#undef H
-
-daemon_settings::daemon_settings() :
-    settings(all_settings),
-    bool_settings(all_bool_settings)
+generate::iterator_range_t Daemon::generate_spawn_range(const generate::problem_count_t &problem_count)
 {
+    generate::vector_t* generated_range = new generate::vector_t(problem_count);
+    problem_sets.push_back(generated_range);
+    return generate::iterator_range(*generated_range);
 }
 
-daemon_settings::value_t daemon_settings::get_setting(const std::string &setting_signature) const
+bool Daemon::should_thread(std::string_view process_signature, const generate::problem_count_t &problem_count)
 {
-    return this->settings.at(SettingStringHash(setting_signature).value());
+    bool force_threaded = settings.get_bool_setting("force-threaded"sv);
+    bool force_unthreaded = settings.get_bool_setting("force-unthreaded"sv);
+    if (force_threaded ^ force_unthreaded) // If they are different, then parse for which one is on
+    {
+        if (force_threaded) { return true; }
+        if (force_unthreaded) { return false; }
+    }
+    // If the settings are the same, then ignore them
+    return problem_count > settings.get_int_setting(std::string(process_signature) + "-threading-threshold");
 }
 
-void daemon_settings::set_setting(const std::string &setting_signature, const daemon_settings::value_t &value)
+void Daemon::cleanup_spawn()
 {
-    this->settings.at(SettingStringHash(setting_signature).value()) = value;
+    // Join all the threads
+    for (spawn& thread : spawns)
+    {
+        thread.join();
+    }
 }
 
-daemon_settings::bool_value_t daemon_settings::get_bool_setting(const std::string &setting_signature) const
+void Daemon::ask()
 {
-    return this->bool_settings.at(SettingStringHash(setting_signature).value());
+    generate::problem_count_t total_problem_count = 0;
+    for (generate::vector_t* problem_set_pointer : problem_sets)
+    {
+        total_problem_count += problem_set_pointer->size();
+    }
+    generate::vector_t total_problem_set(total_problem_count);
+    generate::problem_iterator_t it = total_problem_set.begin();
+    for (generate::vector_t* problem_set_pointer : problem_sets)
+    {
+        for (mprgen::MathProblem problem : *problem_set_pointer)
+        {
+            *it = problem;
+            it++;
+        }
+    }
+
+    mprgen::ask(total_problem_set); // TODO: Implement file push system if the setting is enabled
 }
 
-void daemon_settings::toggle_bool_setting(const std::string &setting_signature)
+void Daemon::execute(const std::vector<std::string> &arguments)
 {
-    bool_value_t& setting = this->bool_settings.at(SettingStringHash(setting_signature).value());
-    setting = !setting;
-}
+    struct {
+        std::string_view signature{""sv};
+        bool primed{false};
 
-void daemon::execute(int argc, char **argv)
-{
-    // TODO
-}
+        void prime(std::string_view new_signature)
+        {
+            primed = true;
+            signature = new_signature;
+        }
+    } argument_cache;
 
-void daemon::spawn_process(const std::string &process_signature)
-{
-    // TODO
+    // Parse the command line arguments
+    for (const std::string& argument : arguments)
+    {
+        const std::string_view argument_view(argument);
+
+        if (argument_cache.primed)
+        {
+            settings.set_int_setting(argument_cache.signature, stoi(std::string(argument_view)));
+            continue;
+        }
+
+        // As you encounter them, change settings
+        if (argument_view[0] == '-')
+        {
+            if (argument_view[1] == '-')
+            {
+                // Parse Long Options
+                const std::string_view setting_signature = argument_view.substr(2);
+                if (settings.is_bool_setting(setting_signature))
+                {
+                    settings.toggle_bool_setting(setting_signature);
+                    continue;
+                }
+                if (settings.is_int_setting(setting_signature))
+                {
+                    argument_cache.prime(setting_signature);
+                    continue;
+                }
+                const std::string error_message = "Unrecognized option \"" + std::string(setting_signature) + "\", ignoring...\n";
+                std::cout << error_message << std::flush;
+                continue;
+            }
+            // Parse Short Options
+            for (std::string::size_type i = 1; i < argument_view.length(); i++) // This loop fails if the argument's length is equal to the maximum length that can be stored by std::string::size_type
+            {
+                switch (argument_view[i]) // Parse Short Options
+                {
+                case 'v': // Verbose
+                    settings.toggle_bool_setting("verbose"sv);
+                    break;
+                case 'f': // File
+                    settings.toggle_bool_setting("file"sv);
+                    break;
+                };
+            }
+            continue;
+        }
+        // If you encounter a process, spawn it
+        spawn_process(argument_view);
+    }
 }

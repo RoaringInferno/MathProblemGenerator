@@ -15,4 +15,6 @@ namespace generate
         problem_iterator_t begin;
         problem_iterator_t end;
     } iterator_range_t;
+
+    iterator_range_t iterator_range(vector_t& range);
 };

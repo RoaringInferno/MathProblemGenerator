@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 project(MathProblemGenerator)
 
-add_executable(MathProblemGenerator)
+add_executable(mprgen)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-target_sources(MathProblemGenerator PRIVATE ${SOURCES})
-target_include_directories(MathProblemGenerator PRIVATE include/)
+target_sources(mprgen PRIVATE ${SOURCES})
+target_include_directories(mprgen PRIVATE include/)
 
 add_subdirectory(lib/math-problem)
-target_link_libraries(MathProblemGenerator PRIVATE math-problem)
+target_link_libraries(mprgen PRIVATE math-problem)
