@@ -57,13 +57,15 @@ void Daemon::ask()
     }
 
     // TODO: Implement file push system if the setting is enabled
-    if (!settings.get_bool_setting("file")) { mprgen::ask(total_problem_set); }
+    if (!settings.get_bool_setting("output-to-file")) {
+        mprgen::ask(total_problem_set);
+    }
     else {
         std::ofstream problem_output_file, solution_output_file;
         // Create a file called "problems"
-        problem_output_file.open("problems.txt", std::ios::trunc);
+        problem_output_file.open(this->problem_output_file_path, std::ios::trunc);
         // And a file called "solutions"
-        solution_output_file.open("solutions.txt", std::ios::trunc);
+        solution_output_file.open(this->solution_output_file_path, std::ios::trunc);
         // If either already exist, wipe them first
         // Write problems and solutions
         for (const mprgen::MathProblem& problem : total_problem_set)
@@ -71,6 +73,8 @@ void Daemon::ask()
             problem_output_file << problem.get_problem() << "\n";
             solution_output_file << problem.get_solution() << "\n";
         }
+
+        settings.print_verbose("Wrote output to files " + this->problem_output_file_path + " and " + this->solution_output_file_path);
     }
 }
 
@@ -94,7 +98,6 @@ void Daemon::execute(const std::vector<std::string> &arguments)
 
         if (argument_cache.primed)
         {
-            settings.print_verbose("Setting \""s + std::string(argument_cache.signature) + "\" to "s + std::string(argument_view));
             settings.set_int_setting(argument_cache.signature, stoi(std::string(argument_view)));
             argument_cache.primed = false;
             continue;
@@ -109,7 +112,6 @@ void Daemon::execute(const std::vector<std::string> &arguments)
                 const std::string_view setting_signature = argument_view.substr(2);
                 if (settings.is_bool_setting(setting_signature))
                 {
-                    settings.print_verbose("Toggling setting \""s + std::string(setting_signature) + "\""s);
                     settings.toggle_bool_setting(setting_signature);
                     continue;
                 }
@@ -128,12 +130,10 @@ void Daemon::execute(const std::vector<std::string> &arguments)
                 switch (argument_view[i]) // Parse Short Options
                 {
                 case 'v': // Verbose
-                    settings.print_verbose("Toggling setting \"verbose\" from 'v'");
                     settings.toggle_bool_setting("verbose"sv);
                     break;
                 case 'f': // File
-                    settings.print_verbose("Toggling setting \"file\" from 'f'");
-                    settings.toggle_bool_setting("file"sv);
+                    settings.toggle_bool_setting("output-to-file"sv);
                     break;
                 };
             }

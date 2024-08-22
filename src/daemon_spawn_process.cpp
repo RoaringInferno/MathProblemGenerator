@@ -45,10 +45,12 @@ void Daemon::spawn_process(std::string_view process_signature)
 
             if (should_thread(process_signature, problem_count))
             {
+                settings.print_verbose(this->parallel_generation_verbose_dialogue);
                 spawns.push_back(std::thread(generate::polynomial_factoring::problem_set, params, spawn_range));
             }
             else
             {
+                settings.print_verbose(this->series_generation_verbose_dialogue);
                 generate::polynomial_factoring::problem_set(params, spawn_range);
             }
             return;

@@ -25,7 +25,7 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
     {H("force-unthreaded"), false}, // Forces the program to generate in series. Conflicts with "force-threaded"
     
     {H("verbose"), false}, // Short: 'v'. The program will output a parse message for each argument
-    {H("file"), true} // Short: 'f'. The program will output questions to 2 separate text files
+    {H("output-to-file"), true} // Short: 'f'. The program will output questions to 2 separate text files
 };
 
 #undef H
@@ -48,6 +48,7 @@ Daemon_settings::int_value_t Daemon_settings::get_int_setting(std::string_view s
 
 void Daemon_settings::set_int_setting(std::string_view setting_signature, const Daemon_settings::int_value_t &value)
 {
+    print_verbose("Setting \"" + std::string(setting_signature) + "\" to " + std::to_string(value));
     this->int_settings.at(SettingStringHash::hash_function(setting_signature)) = value;
 }
 
@@ -58,8 +59,15 @@ Daemon_settings::bool_value_t Daemon_settings::get_bool_setting(std::string_view
 
 void Daemon_settings::toggle_bool_setting(std::string_view setting_signature)
 {
+    const auto bool_to_string = [](const bool value) -> std::string
+    {
+        if (value) { return  "true"; }
+        return "false";
+    };
+
     bool_value_t& setting = this->bool_settings.at(SettingStringHash::hash_function(setting_signature));
     setting = !setting;
+    print_verbose("Toggling setting \"" + std::string(setting_signature) + "\" to " + bool_to_string(setting));
 }
 
 bool Daemon_settings::is_setting(std::string_view setting_signature) const
