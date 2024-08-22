@@ -1,4 +1,4 @@
-#include "polynomial-factoring.hpp"
+#include "generate/polynomial-factoring.hpp"
 
 #include "mprgen/number-gen.hpp"
 

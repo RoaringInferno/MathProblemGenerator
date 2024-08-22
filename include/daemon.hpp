@@ -1,7 +1,7 @@
 #pragma once
 
 #include "generate.hpp"
-#include "input_parsing.hpp"
+#include "input-parsing.hpp"
 
 #include <vector>
 #include <thread>

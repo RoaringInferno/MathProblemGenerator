@@ -1,6 +1,6 @@
 #include "daemon.hpp"
 
-#include "polynomial-factoring.hpp"
+#include "generate/all-inc.hpp"
 
 #include <string>
 #include <string_view>
@@ -20,7 +20,7 @@ void Daemon::spawn_process(std::string_view process_signature)
     generate::iterator_range_t spawn_range = generate_spawn_range(problem_count);
 
 
-    settings.print_verbose("Generating " + std::to_string(problem_count) + " \"" + std::string(process_signature) + "\" problem(s) with settings ...");
+    settings.print_verbose("Generating " + std::to_string(problem_count) + " \"" + std::string(process_signature) + "\" problem(s) with settings...");
     switch (process_hash.value())
     /**
      * For each process, generate the config struct.
