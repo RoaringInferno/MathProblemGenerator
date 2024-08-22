@@ -5,8 +5,6 @@
 #include <string>
 #include <string_view>
 
-using namespace std::literals::string_view_literals; // To get access to the ""sv operator
-
 #define EXECUTE_PROCESS(PROBLEM_NMSP)                                                                   \
 if (should_thread(process_signature, problem_count))                                                    \
 {                                                                                                       \
@@ -74,3 +72,5 @@ void Daemon::spawn_process(std::string_view process_signature)
         }
     };
 }
+
+#undef EXECUTE_PROCESS
