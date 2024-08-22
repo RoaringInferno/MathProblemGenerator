@@ -148,12 +148,5 @@ std::string generate_sign_string(const mprgen::integer &coeff)
 
 mprgen::integer generate_nonzero_factor(mprgen::IntegerGen &factor_gen)
 {
-    while(true)
-    {
-        mprgen::integer factor = factor_gen.generate();
-        if (factor != 0)
-        {
-            return factor;
-        }
-    }
+    return factor_gen.generate_nonzero();
 }

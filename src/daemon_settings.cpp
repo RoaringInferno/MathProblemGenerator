@@ -13,11 +13,17 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t
     {H("polyfac-factor-min"), -10}, // The smallest number that will appear as the loose number in any factor
     {H("polyfac-factor-count"), 2}, // The number of factors each problem will have (and thus the order of the problem)
 
+    // Dot Product
+    {H("dotprod-component-max"), 9}, // The largest number that will appear as a vector component
+    {H("dotprod-component-min"), -9}, // The smallest number that will appear as a vector component
+    {H("dotprod-vector-dimension"), 3}, // The number of components per vector
+
     // Threading Thresholds
     // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-threading-threshold"), 100},
+    {H("polyfac-threading-threshold"), 50},
+    {H("dotprod-threading-threshold"), 50},
 
-    // General Settings (I put them at the bottom so I wouldn't have to worry about commas ngl)
+    // General Settings (I put them at the bottom so I wouldn't have to worry about commas)
     {H("problem-count"), 10} // The amount of problems that are created every batch
 };
 const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_t> all_bool_settings = {

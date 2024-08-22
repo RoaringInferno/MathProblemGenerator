@@ -20,11 +20,13 @@ public:
 
 enum process : unsigned char
 {
-    polynomial_factoring
+    polynomial_factoring,
+    dot_product
 };
 
 inline static const std::string PROCESS_SIGNATURE[] = {
-    "polyfac"
+    "polyfac",
+    "dotprod"
 };
 
 class ProcessStringHash
@@ -70,6 +72,9 @@ inline constexpr SettingStringHash::type_t SettingStringHash::value() const
 
 inline constexpr ProcessStringHash::type_t ProcessStringHash::hash_function(std::string_view option)
 {
+    if (option == "polyfac") { return polynomial_factoring; }
+    if (option == "dotprod") { return dot_product; }
+
     return polynomial_factoring;
 }
 

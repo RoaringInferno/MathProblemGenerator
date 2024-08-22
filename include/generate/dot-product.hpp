@@ -7,17 +7,15 @@
 
 namespace generate
 {
-    namespace polynomial_factoring
+    namespace dot_product
     {
-        typedef unsigned short factor_count_t;
+        typedef unsigned short vector_dimension_t;
 
         struct parameters
         {
-            mprgen::integer factor_max;
-            mprgen::integer factor_min;
-            mprgen::integer front_factor_max;
-            mprgen::integer front_factor_min;
-            factor_count_t factor_count;
+            mprgen::integer component_max;
+            mprgen::integer component_min;
+            vector_dimension_t vector_dimension;
         };
 
         mprgen::MathProblem problem(

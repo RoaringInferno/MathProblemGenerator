@@ -7,6 +7,18 @@
 
 using namespace std::literals::string_view_literals; // To get access to the ""sv operator
 
+#define EXECUTE_PROCESS(PROBLEM_NMSP)                                                                   \
+if (should_thread(process_signature, problem_count))                                                    \
+{                                                                                                       \
+    settings.print_verbose(this->parallel_generation_verbose_dialogue);                                 \
+    spawns.push_back(std::thread(generate::PROBLEM_NMSP::problem_set, params, spawn_range));            \
+}                                                                                                       \
+else                                                                                                    \
+{                                                                                                       \
+    settings.print_verbose(this->series_generation_verbose_dialogue);                                   \
+    generate::PROBLEM_NMSP::problem_set(params, spawn_range);                                           \
+}
+
 void Daemon::spawn_process(std::string_view process_signature)
 {
     const auto pull_int_setting = [&](const std::string& setting_name) -> Daemon_settings::int_value_t
@@ -43,16 +55,21 @@ void Daemon::spawn_process(std::string_view process_signature)
             settings.print_verbose("\tfactor-min = " + std::to_string(params.factor_min));
             settings.print_verbose("\tfactor-max = " + std::to_string(params.factor_max));
 
-            if (should_thread(process_signature, problem_count))
-            {
-                settings.print_verbose(this->parallel_generation_verbose_dialogue);
-                spawns.push_back(std::thread(generate::polynomial_factoring::problem_set, params, spawn_range));
-            }
-            else
-            {
-                settings.print_verbose(this->series_generation_verbose_dialogue);
-                generate::polynomial_factoring::problem_set(params, spawn_range);
-            }
+            EXECUTE_PROCESS(polynomial_factoring)
+            return;
+        }
+        case process::dot_product:
+        {
+            const generate::dot_product::parameters params = {
+                settings.get_int_setting("dotprod-component-max"),
+                settings.get_int_setting("dotprod-component-min"),
+                static_cast<generate::dot_product::vector_dimension_t>(settings.get_int_setting("dotprod-vector-dimension"))
+            };
+            settings.print_verbose("\tcomponent-max = " + std::to_string(params.component_max));
+            settings.print_verbose("\tcomponent-min = " + std::to_string(params.component_min));
+            settings.print_verbose("\tvector-dimension = " + std::to_string(params.vector_dimension));
+
+            EXECUTE_PROCESS(dot_product)
             return;
         }
     };
