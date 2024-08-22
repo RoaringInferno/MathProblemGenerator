@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string_view>
+#include <fstream>
 
 using namespace std::literals::string_literals; // To get access to the ""s operator
 using namespace std::literals::string_view_literals; // To get access to the ""sv operator
@@ -48,14 +49,29 @@ void Daemon::ask()
     generate::problem_iterator_t it = total_problem_set.begin();
     for (generate::vector_t* problem_set_pointer : problem_sets)
     {
-        for (mprgen::MathProblem problem : *problem_set_pointer)
+        for (const mprgen::MathProblem& problem : *problem_set_pointer)
         {
             *it = problem;
             it++;
         }
     }
 
-    mprgen::ask(total_problem_set); // TODO: Implement file push system if the setting is enabled
+    // TODO: Implement file push system if the setting is enabled
+    if (!settings.get_bool_setting("file")) { mprgen::ask(total_problem_set); }
+    else {
+        std::ofstream problem_output_file, solution_output_file;
+        // Create a file called "problems"
+        problem_output_file.open("problems.txt", std::ios::trunc);
+        // And a file called "solutions"
+        solution_output_file.open("solutions.txt", std::ios::trunc);
+        // If either already exist, wipe them first
+        // Write problems and solutions
+        for (const mprgen::MathProblem& problem : total_problem_set)
+        {
+            problem_output_file << problem.get_problem() << "\n";
+            solution_output_file << problem.get_solution() << "\n";
+        }
+    }
 }
 
 void Daemon::execute(const std::vector<std::string> &arguments)
