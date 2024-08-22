@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string_view>
 
+using namespace std::literals::string_literals; // To get access to the ""s operator
 using namespace std::literals::string_view_literals; // To get access to the ""sv operator
 
 generate::iterator_range_t Daemon::generate_spawn_range(const generate::problem_count_t &problem_count)
@@ -77,7 +78,9 @@ void Daemon::execute(const std::vector<std::string> &arguments)
 
         if (argument_cache.primed)
         {
+            settings.print_verbose("Setting \""s + std::string(argument_cache.signature) + "\" to "s + std::string(argument_view));
             settings.set_int_setting(argument_cache.signature, stoi(std::string(argument_view)));
+            argument_cache.primed = false;
             continue;
         }
 
@@ -90,6 +93,7 @@ void Daemon::execute(const std::vector<std::string> &arguments)
                 const std::string_view setting_signature = argument_view.substr(2);
                 if (settings.is_bool_setting(setting_signature))
                 {
+                    settings.print_verbose("Toggling setting \""s + std::string(setting_signature) + "\""s);
                     settings.toggle_bool_setting(setting_signature);
                     continue;
                 }
@@ -98,7 +102,7 @@ void Daemon::execute(const std::vector<std::string> &arguments)
                     argument_cache.prime(setting_signature);
                     continue;
                 }
-                const std::string error_message = "Unrecognized option \"" + std::string(setting_signature) + "\", ignoring...\n";
+                const std::string error_message = "Unrecognized option \""s + std::string(setting_signature) + "\", ignoring...\n"s;
                 std::cout << error_message << std::flush;
                 continue;
             }
@@ -108,9 +112,11 @@ void Daemon::execute(const std::vector<std::string> &arguments)
                 switch (argument_view[i]) // Parse Short Options
                 {
                 case 'v': // Verbose
+                    settings.print_verbose("Toggling setting \"verbose\" from 'v'");
                     settings.toggle_bool_setting("verbose"sv);
                     break;
                 case 'f': // File
+                    settings.print_verbose("Toggling setting \"file\" from 'f'");
                     settings.toggle_bool_setting("file"sv);
                     break;
                 };

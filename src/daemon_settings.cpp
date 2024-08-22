@@ -5,13 +5,13 @@
 // Defining all setting values
 #define H SettingStringHash::hash_function
 
-const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t> all_settings = {
+const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t> all_int_settings = {
     // Polynomial Factoring
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-front-factor-max"), 2}, // The largest number that will appear as the front coefficient in any factor
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-front-factor-min"), -2}, // The smallest number that will appear as the front coefficient in any factor
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-max"), 10}, // The largest number that will appear as the loose number in any factor
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-min"), -10}, // The smallest number that will appear as the loose number in any factor
-    {H(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-count"), 2}, // The number of factors each problem will have (and thus the order of the problem)
+    {H("polyfac-front-factor-max"), 2}, // The largest number that will appear as the front coefficient in any factor
+    {H("polyfac-front-factor-min"), -2}, // The smallest number that will appear as the front coefficient in any factor
+    {H("polyfac-factor-max"), 10}, // The largest number that will appear as the loose number in any factor
+    {H("polyfac-factor-min"), -10}, // The smallest number that will appear as the loose number in any factor
+    {H("polyfac-factor-count"), 2}, // The number of factors each problem will have (and thus the order of the problem)
 
     // Threading Thresholds
     // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
@@ -31,7 +31,7 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
 #undef H
 
 Daemon_settings::Daemon_settings() :
-    int_settings(all_settings),
+    int_settings(all_int_settings),
     bool_settings(all_bool_settings)
 {
 }

@@ -5,7 +5,8 @@
 class SettingStringHash
 {
 public:
-    typedef unsigned char type_t;
+    //typedef unsigned char type_t;
+    typedef std::string type_t;
 public:
     static constexpr inline type_t hash_function(std::string_view option);
 private:
@@ -44,6 +45,8 @@ public:
 // Inline Definitions
 inline constexpr SettingStringHash::type_t SettingStringHash::hash_function(std::string_view option)
 {
+    return std::string(option);
+    /*
     // TODO: Implement a modular hashing function for this
     if (option == "polyfac-front-factor-max") return 0;
     if (option == "polyfac-front-factor-min") return 1;
@@ -53,6 +56,7 @@ inline constexpr SettingStringHash::type_t SettingStringHash::hash_function(std:
     if (option == "polyfac-threading-threshold") return 5;
     if (option == "problem-count") return 6;
     return 0;
+    */
 }
 
 constexpr SettingStringHash::SettingStringHash(std::string_view option) : hash(hash_function(option))

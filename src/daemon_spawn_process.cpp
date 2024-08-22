@@ -31,11 +31,11 @@ void Daemon::spawn_process(std::string_view process_signature)
         case process::polynomial_factoring:
         {
             const generate::polynomial_factoring::parameters params = {
-                settings.get_int_setting(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-max"),
-                settings.get_int_setting(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-min"),
-                settings.get_int_setting(PROCESS_SIGNATURE[process::polynomial_factoring] + "-front-factor-max"),
-                settings.get_int_setting(PROCESS_SIGNATURE[process::polynomial_factoring] + "-front-factor-min"),
-                static_cast<generate::polynomial_factoring::factor_count_t>(settings.get_int_setting(PROCESS_SIGNATURE[process::polynomial_factoring] + "-factor-count"))
+                settings.get_int_setting("polyfac-factor-max"),
+                settings.get_int_setting("polyfac-factor-min"),
+                settings.get_int_setting("polyfac-front-factor-max"),
+                settings.get_int_setting("polyfac-front-factor-min"),
+                static_cast<generate::polynomial_factoring::factor_count_t>(settings.get_int_setting("polyfac-factor-count"))
             };
             settings.print_verbose("\tfactor-count = " + std::to_string(params.factor_count));
             settings.print_verbose("\tfront-factor-min = " + std::to_string(params.front_factor_min));
