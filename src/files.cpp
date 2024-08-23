@@ -1,5 +1,9 @@
 #include "files.hpp"
 
+const std::string datestamp_format = "%T";
+const std::string timestamp_format = "%F";
+
+
 File_Timestamp::File_Timestamp() :
     datestamp(""),
     timestamp("")

@@ -2,6 +2,13 @@
 
 #include <iostream>
 
+namespace filepath
+{
+    const std::string log_file_directory = "logs/";
+    const std::string log_file_name = "mprgen-log-";
+    const std::string log_file_extension = ".txt";
+}
+
 // Defining all setting values
 #define H SettingStringHash::hash_function
 
@@ -43,9 +50,9 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
 
 std::string Daemon_settings::generate_log_file_path()
 {
-    std::filesystem::create_directories(log_file_directory);
+    std::filesystem::create_directories(filepath::log_file_directory);
 
-    return log_file_directory + log_file_name + timestamp.get_datetimestamp() + log_file_extension;
+    return filepath::log_file_directory + filepath::log_file_name + timestamp.get_datetimestamp() + filepath::log_file_extension;
 }
 
 Daemon_settings::Daemon_settings() : int_settings(all_int_settings),

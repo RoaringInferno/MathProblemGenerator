@@ -16,10 +16,6 @@ public:
     typedef int int_value_t;
     typedef bool bool_value_t;
 private:
-    const std::string log_file_directory = "logs/";
-    const std::string log_file_name = "mprgen-log-";
-    const std::string log_file_extension = ".txt";
-
     std::string generate_log_file_path();
 private:
     std::unordered_map<SettingStringHash::type_t, int_value_t> int_settings;
@@ -51,14 +47,6 @@ class Daemon
 {
 public:
     typedef std::thread spawn;
-private: // Dialogues
-    const std::string output_file_directory = "output/";
-    const std::string problem_output_file_name = "problems";
-    const std::string solution_output_file_name = "solutions";
-    const std::string output_file_extension = ".txt";
-
-    const std::string parallel_generation_verbose_dialogue = "\tSpawning parallel process...";
-    const std::string series_generation_verbose_dialogue = "\tGenerating in series...";
 private:
     std::vector<spawn> spawns;
     std::vector<generate::vector_t*> problem_sets;

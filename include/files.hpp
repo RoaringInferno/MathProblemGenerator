@@ -5,9 +5,6 @@
 class File_Timestamp
 {
 private:
-    const std::string datestamp_format = "%Y-%m-%d";
-    const std::string timestamp_format = "%H:%M:%S";
-private:
     std::string datestamp;
     std::string timestamp;
 public:

@@ -6,6 +6,15 @@
 #include <string_view>
 #include <fstream>
 
+// Dialogues
+const std::string output_file_directory = "output/";
+const std::string problem_output_file_name = "problems";
+const std::string solution_output_file_name = "solutions";
+const std::string output_file_extension = ".txt";
+
+const std::string parallel_generation_verbose_dialogue = "\tSpawning parallel process...";
+const std::string series_generation_verbose_dialogue = "\tGenerating in series...";
+
 using namespace std::literals::string_literals; // To get access to the ""s operator
 using namespace std::literals::string_view_literals; // To get access to the ""sv operator
 
