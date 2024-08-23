@@ -1,6 +1,6 @@
 #include "generate/polynomial-factoring.hpp"
 
-#include "mprgen/number-gen.hpp"
+#include "generate/number-gen.hpp"
 
 std::string generate_term_string(const mprgen::integer& coeff, const uint32_t& order);
 std::string generate_sign_string(const mprgen::integer& coeff);

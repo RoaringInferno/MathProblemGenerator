@@ -1,6 +1,6 @@
 #include "daemon.hpp"
 
-#include "mprgen/math-problem.hpp"
+#include "generate/math-problem.hpp"
 
 #include <iostream>
 #include <string_view>

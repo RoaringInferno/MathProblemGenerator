@@ -3,7 +3,7 @@
 #include <thread>
 #include <vector>
 
-#include "generate/all-inc.hpp"
+#include "generate/all-problems.hpp"
 
 void profile(
     std::string_view process_name,

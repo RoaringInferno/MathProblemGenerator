@@ -1,6 +1,7 @@
 #pragma once
 
-#include "mprgen/math-problem.hpp"
+#include "generate/math-problem.hpp"
+#include "generate/number.hpp"
 
 #include <cstdint>
 #include <vector>

@@ -1,6 +1,6 @@
 #include "daemon.hpp"
 
-#include "generate/all-inc.hpp"
+#include "generate/all-problems.hpp"
 
 #include <string>
 #include <string_view>

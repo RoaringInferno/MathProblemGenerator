@@ -2,9 +2,6 @@
 
 #include "generate.hpp"
 
-#include "mprgen/math-problem.hpp"
-#include "mprgen/number.hpp"
-
 namespace generate
 {
     namespace polynomial_factoring

@@ -1,6 +1,6 @@
 #include "generate/cross-product.hpp"
 
-#include "mprgen/number-gen.hpp"
+#include "generate/number-gen.hpp"
 
 mprgen::MathProblem generate::cross_product::problem(const parameters &params)
 {

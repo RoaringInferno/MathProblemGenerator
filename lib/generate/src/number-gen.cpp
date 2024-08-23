@@ -1,4 +1,4 @@
-#include "mprgen/number-gen.hpp"
+#include "generate/number-gen.hpp"
 
 mprgen::Generator::Generator() :
     gen(std::random_device()())

@@ -1,4 +1,4 @@
-#include "mprgen/math-problem.hpp"
+#include "generate/math-problem.hpp"
 
 #include <iostream>
 

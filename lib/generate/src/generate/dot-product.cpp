@@ -1,7 +1,6 @@
 #include "generate/dot-product.hpp"
 
-#include "mprgen/number-gen.hpp"
-#include "generate/dot-product.hpp"
+#include "generate/number-gen.hpp"
 
 #include <iostream>
 
