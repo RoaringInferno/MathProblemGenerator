@@ -7,6 +7,7 @@
 #include <thread>
 #include <unordered_map>
 #include <string>
+#include <fstream>
 
 class Daemon_settings
 {
@@ -14,10 +15,19 @@ public:
     typedef int int_value_t;
     typedef bool bool_value_t;
 private:
+    const std::string log_file_directory = "logs/";
+    const std::string log_file_name = "mprgen-log-";
+    const std::string log_file_extension = ".txt";
+
+    std::string generate_log_file_path();
+private:
     std::unordered_map<SettingStringHash::type_t, int_value_t> int_settings;
     std::unordered_map<SettingStringHash::type_t, bool_value_t> bool_settings;
+
+    std::ofstream log_file;
 public:
     Daemon_settings();
+    ~Daemon_settings();
 
     int_value_t get_int_setting(std::string_view setting_signature) const;
     void set_int_setting(std::string_view setting_signature, const int_value_t& value);
@@ -27,6 +37,8 @@ public:
     bool is_setting(std::string_view setting_signature) const;
     bool is_bool_setting(std::string_view setting_signature) const;
     bool is_int_setting(std::string_view setting_signature) const;
+
+    void write_log(std::string_view text);
 public: // Utility Functions
     void print_verbose(std::string_view text);
 };

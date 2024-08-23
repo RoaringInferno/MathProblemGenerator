@@ -35,21 +35,52 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
     {H("force-threaded"), false}, // Forces the program to generate in parallel. Conflicts with "force-unthreaded"
     {H("force-unthreaded"), false}, // Forces the program to generate in series. Conflicts with "force-threaded"
     
-    {H("verbose"), false}, // Short: 'v'. The program will output a parse message for each argument
+    {H("verbose"), false}, // Short: 'v'. The program will output a parse message for each argument. If this is off, the program will only output errors, and verbose messages will be written to a log file
     {H("output-to-file"), true} // Short: 'f'. The program will output questions to 2 separate text files
 };
 
 #undef H
 
-Daemon_settings::Daemon_settings() :
-    int_settings(all_int_settings),
-    bool_settings(all_bool_settings)
+std::string Daemon_settings::generate_log_file_path()
 {
+    std::filesystem::create_directories(log_file_directory);
+
+    std::time_t now = std::time(nullptr);
+    std::tm* current_time = std::localtime(&now);
+    char current_datetime_buffer[80];
+    std::strftime(current_datetime_buffer, sizeof(current_datetime_buffer), "%Y-%m-%d-%H:%M:%S", current_time);
+
+    return log_file_directory + log_file_name + current_datetime_buffer + log_file_extension;
+}
+
+Daemon_settings::Daemon_settings() : int_settings(all_int_settings),
+                                     bool_settings(all_bool_settings),
+                                     log_file(generate_log_file_path(), std::ios::trunc)
+{
+    if (log_file.fail())
+    {
+        std::cerr << "Failed to open log file" << std::endl;
+        exit(1);
+    }
+}
+
+Daemon_settings::~Daemon_settings()
+{
+    if (this->bool_settings.at(SettingStringHash::hash_function("verbose")))
+    {
+        std::cout << "Log file path: " << generate_log_file_path() << std::endl;
+    }
+    log_file.close();
 }
 
 void Daemon_settings::print_verbose(std::string_view text)
 {
-    if (this->bool_settings.at(SettingStringHash::hash_function("verbose"))) { std::cout << text << std::endl; };
+    write_log(std::string(text));
+    if (this->bool_settings.at(SettingStringHash::hash_function("verbose")))
+    {
+        std::cout << text << std::endl;
+        return;
+    };
 }
 
 Daemon_settings::int_value_t Daemon_settings::get_int_setting(std::string_view setting_signature) const
@@ -96,4 +127,10 @@ bool Daemon_settings::is_int_setting(std::string_view setting_signature) const
 {
     if (int_settings.find(SettingStringHash::hash_function(setting_signature)) != int_settings.end()) { return true; }
     return false;
+}
+
+void Daemon_settings::write_log(std::string_view text)
+{
+    log_file.write(text.data(), text.size());
+    log_file.put('\n');
 }
