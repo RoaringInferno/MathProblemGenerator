@@ -8,12 +8,10 @@
 #define EXECUTE_PROCESS(PROBLEM_NMSP)                                                                   \
 if (should_thread(process_signature, problem_count))                                                    \
 {                                                                                                       \
-    settings.print_verbose(this->parallel_generation_verbose_dialogue);                                 \
     spawns.push_back(std::thread(generate::PROBLEM_NMSP::problem_set, params, spawn_range));            \
 }                                                                                                       \
 else                                                                                                    \
 {                                                                                                       \
-    settings.print_verbose(this->series_generation_verbose_dialogue);                                   \
     generate::PROBLEM_NMSP::problem_set(params, spawn_range);                                           \
 }
 
@@ -68,6 +66,18 @@ void Daemon::spawn_process(std::string_view process_signature)
             settings.print_verbose("\tvector-dimension = " + std::to_string(params.vector_dimension));
 
             EXECUTE_PROCESS(dot_product)
+            return;
+        }
+        case process::cross_product:
+        {
+            const generate::cross_product::parameters params = {
+                settings.get_int_setting("crossprod-component-max"),
+                settings.get_int_setting("crossprod-component-min"),
+            };
+            settings.print_verbose("\tcomponent-max = " + std::to_string(params.component_max));
+            settings.print_verbose("\tcomponent-min = " + std::to_string(params.component_min));
+
+            EXECUTE_PROCESS(cross_product)
             return;
         }
     };

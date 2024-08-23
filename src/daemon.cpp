@@ -22,11 +22,22 @@ bool Daemon::should_thread(std::string_view process_signature, const generate::p
     bool force_unthreaded = settings.get_bool_setting("force-unthreaded"sv);
     if (force_threaded ^ force_unthreaded) // If they are different, then parse for which one is on
     {
-        if (force_threaded) { return true; }
-        if (force_unthreaded) { return false; }
+        if (force_threaded) {
+            settings.print_verbose(parallel_generation_verbose_dialogue + "(force_threaded)");
+            return true;
+        }
+        if (force_unthreaded) {
+            settings.print_verbose(series_generation_verbose_dialogue + "(force_unthreaded)");
+            return false;
+        }
     }
     // If the settings are the same, then ignore them
-    return problem_count > settings.get_int_setting(std::string(process_signature) + "-threading-threshold");
+    if (problem_count > settings.get_int_setting(std::string(process_signature) + "-threading-threshold")) {
+        settings.print_verbose(parallel_generation_verbose_dialogue);
+        return true;
+    }
+    settings.print_verbose(series_generation_verbose_dialogue);
+    return false;
 }
 
 void Daemon::cleanup_spawn()

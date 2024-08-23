@@ -39,8 +39,8 @@ private: // Dialogues
     const std::string problem_output_file_path = "problems.txt";
     const std::string solution_output_file_path = "solutions.txt";
 
-    const std::string parallel_generation_verbose_dialogue = "Spawning parallel process...";
-    const std::string series_generation_verbose_dialogue = "Generating in series...";
+    const std::string parallel_generation_verbose_dialogue = "\tSpawning parallel process...";
+    const std::string series_generation_verbose_dialogue = "\tGenerating in series...";
 private:
     std::vector<spawn> spawns;
     std::vector<generate::vector_t*> problem_sets;

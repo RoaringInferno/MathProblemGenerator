@@ -18,10 +18,15 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t
     {H("dotprod-component-min"), -9}, // The smallest number that will appear as a vector component
     {H("dotprod-vector-dimension"), 3}, // The number of components per vector
 
+    // Cross Product
+    {H("crossprod-component-max"), 9}, // The largest number that will appear as a vector component
+    {H("crossprod-component-min"), -9}, // The smallest number that will appear as a vector component
+
     // Threading Thresholds
     // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
     {H("polyfac-threading-threshold"), 50},
     {H("dotprod-threading-threshold"), 50},
+    {H("crossprod-threading-threshold"), 50},
 
     // General Settings (I put them at the bottom so I wouldn't have to worry about commas)
     {H("problem-count"), 10} // The amount of problems that are created every batch
