@@ -72,11 +72,16 @@ void Daemon::ask()
         mprgen::ask(total_problem_set);
     }
     else {
+        std::filesystem::create_directory(output_file_directory);
+
+        std::string problem_output_file_path = output_file_directory + problem_output_file_name + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
+        std::string solution_output_file_path = output_file_directory + problem_output_file_name + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
+
         std::ofstream problem_output_file, solution_output_file;
         // Create a file called "problems"
-        problem_output_file.open(this->problem_output_file_path, std::ios::trunc);
+        problem_output_file.open(problem_output_file_path, std::ios::trunc);
         // And a file called "solutions"
-        solution_output_file.open(this->solution_output_file_path, std::ios::trunc);
+        solution_output_file.open(solution_output_file_path, std::ios::trunc);
         // If either already exist, wipe them first
         // Write problems and solutions
         for (const mprgen::MathProblem& problem : total_problem_set)
@@ -85,7 +90,7 @@ void Daemon::ask()
             solution_output_file << problem.get_solution() << "\n";
         }
 
-        settings.print_verbose("Wrote output to files " + this->problem_output_file_path + " and " + this->solution_output_file_path);
+        settings.print_verbose("Wrote output to files " + problem_output_file_path + " and " + solution_output_file_path);
     }
 }
 

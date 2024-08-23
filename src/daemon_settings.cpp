@@ -45,18 +45,15 @@ std::string Daemon_settings::generate_log_file_path()
 {
     std::filesystem::create_directories(log_file_directory);
 
-    std::time_t now = std::time(nullptr);
-    std::tm* current_time = std::localtime(&now);
-    char current_datetime_buffer[80];
-    std::strftime(current_datetime_buffer, sizeof(current_datetime_buffer), "%Y-%m-%d-%H:%M:%S", current_time);
-
-    return log_file_directory + log_file_name + current_datetime_buffer + log_file_extension;
+    return log_file_directory + log_file_name + timestamp.get_datetimestamp() + log_file_extension;
 }
 
 Daemon_settings::Daemon_settings() : int_settings(all_int_settings),
                                      bool_settings(all_bool_settings),
-                                     log_file(generate_log_file_path(), std::ios::trunc)
+                                     timestamp(),
+                                     log_file()
 {
+    log_file.open(generate_log_file_path(), std::ios::trunc);
     if (log_file.fail())
     {
         std::cerr << "Failed to open log file" << std::endl;
@@ -133,4 +130,9 @@ void Daemon_settings::write_log(std::string_view text)
 {
     log_file.write(text.data(), text.size());
     log_file.put('\n');
+}
+
+const File_Timestamp& Daemon_settings::get_file_timestamp() const
+{
+    return timestamp;
 }

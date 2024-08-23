@@ -2,6 +2,7 @@
 
 #include "generate.hpp"
 #include "input-parsing.hpp"
+#include "files.hpp"
 
 #include <vector>
 #include <thread>
@@ -25,6 +26,7 @@ private:
     std::unordered_map<SettingStringHash::type_t, bool_value_t> bool_settings;
 
     std::ofstream log_file;
+    File_Timestamp timestamp;
 public:
     Daemon_settings();
     ~Daemon_settings();
@@ -39,6 +41,8 @@ public:
     bool is_int_setting(std::string_view setting_signature) const;
 
     void write_log(std::string_view text);
+
+    const File_Timestamp& get_file_timestamp() const;
 public: // Utility Functions
     void print_verbose(std::string_view text);
 };
@@ -48,8 +52,10 @@ class Daemon
 public:
     typedef std::thread spawn;
 private: // Dialogues
-    const std::string problem_output_file_path = "problems.txt";
-    const std::string solution_output_file_path = "solutions.txt";
+    const std::string output_file_directory = "output/";
+    const std::string problem_output_file_name = "problems";
+    const std::string solution_output_file_name = "solutions";
+    const std::string output_file_extension = ".txt";
 
     const std::string parallel_generation_verbose_dialogue = "\tSpawning parallel process...";
     const std::string series_generation_verbose_dialogue = "\tGenerating in series...";
