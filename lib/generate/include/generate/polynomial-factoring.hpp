@@ -21,7 +21,7 @@ namespace generate
         };
 
         mprgen::MathProblem problem(
-            const parameters& params
+            const parameters& params = {9, -9, 2, -2, 2}
         );
 
         void problem_set(
