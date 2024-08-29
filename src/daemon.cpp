@@ -76,15 +76,14 @@ void Daemon::ask()
         }
     }
 
-    // TODO: Implement file push system if the setting is enabled
     if (!settings.get_bool_setting("output-to-file")) {
         mprgen::ask(total_problem_set);
     }
     else {
         std::filesystem::create_directory(output_file_directory);
 
-        std::string problem_output_file_path = output_file_directory + problem_output_file_name + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
-        std::string solution_output_file_path = output_file_directory + problem_output_file_name + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
+        std::string problem_output_file_path = output_file_directory + problem_output_file_name + "-" + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
+        std::string solution_output_file_path = output_file_directory + solution_output_file_name + "-" + settings.get_file_timestamp().get_datetimestamp() + output_file_extension;
 
         std::ofstream problem_output_file, solution_output_file;
         // Create a file called "problems"
@@ -93,10 +92,12 @@ void Daemon::ask()
         solution_output_file.open(solution_output_file_path, std::ios::trunc);
         // If either already exist, wipe them first
         // Write problems and solutions
+        unsigned int problem_number = 1;
         for (const mprgen::MathProblem& problem : total_problem_set)
         {
-            problem_output_file << problem.get_problem() << "\n";
-            solution_output_file << problem.get_solution() << "\n";
+            problem_output_file << problem_number << ". " << problem.get_problem() << "\n";
+            solution_output_file << problem_number << ". " << problem.get_solution() << "\n";
+            problem_number++;
         }
 
         settings.print_verbose("Wrote output to files " + problem_output_file_path + " and " + solution_output_file_path);

@@ -36,6 +36,10 @@ int main()
         mprgen::MathProblem temp = generate::cross_product::problem();
     });
 
+    profile("Matrix Multiplication", [](){
+        mprgen::MathProblem temp = generate::matrix_multiplication::problem();
+    });
+
     std::vector<std::thread> threads;
     profile("Thread Spawning", [&threads](){
         threads.push_back(std::thread([](){}));

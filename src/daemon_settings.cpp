@@ -29,11 +29,22 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t
     {H("crossprod-component-max"), 9}, // The largest number that will appear as a vector component
     {H("crossprod-component-min"), -9}, // The smallest number that will appear as a vector component
 
+    // Matrix Multiplication
+    {H("matrix-mult-max-result-rows"), 3}, // The largest number of rows that the result matrix can have
+    {H("matrix-mult-min-result-rows"), 1}, // The smallest number of rows that the result matrix can have
+    {H("matrix-mult-max-shared-dim"), 3}, // The largest number of columns that the first matrix can have, and the largest number of rows that the second matrix can have
+    {H("matrix-mult-min-shared-dim"), 1}, // The smallest number of columns that the first matrix can have, and the smallest number of rows that the second matrix can have
+    {H("matrix-mult-max-result-cols"), 3}, // The largest number of columns that the result matrix can have
+    {H("matrix-mult-min-result-cols"), 1}, // The smallest number of columns that the result matrix can have
+    {H("matrix-mult-max-cell-value"), 9}, // The largest number that will appear as a cell value in any matrix
+    {H("matrix-mult-min-cell-value"), -9}, // The smallest number that will appear as a cell value in any matrix
+
     // Threading Thresholds
     // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
     {H("polyfac-threading-threshold"), 5},
     {H("dotprod-threading-threshold"), 10},
     {H("crossprod-threading-threshold"), 10},
+    {H("matrix-mult-threading-threshold"), 1},
 
     // General Settings (I put them at the bottom so I wouldn't have to worry about commas)
     {H("problem-count"), 10} // The amount of problems that are created every batch

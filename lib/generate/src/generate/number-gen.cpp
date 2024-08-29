@@ -37,6 +37,11 @@ mprgen::integer mprgen::IntegerGen::generate_nonzero()
     return value;
 }
 
+const mprgen::IntegerGen::params &mprgen::IntegerGen::get_params() const
+{
+    return p;
+}
+
 mprgen::decimal mprgen::DecimalGen::generate(const params &_p)
 {
     dist_type dist(_p.min, _p.max);
@@ -62,4 +67,10 @@ mprgen::decimal mprgen::DecimalGen::generate_nonzero()
         value = this->dist(this->gen);
     } while (value == 0);
     return value;
+}
+
+
+const mprgen::DecimalGen::params &mprgen::DecimalGen::get_params() const
+{
+    return p;
 }

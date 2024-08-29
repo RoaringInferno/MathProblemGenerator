@@ -80,6 +80,30 @@ void Daemon::spawn_process(std::string_view process_signature)
             EXECUTE_PROCESS(cross_product)
             return;
         }
+        case process::matrix_multiplication:
+        {
+            const generate::matrix_multiplication::parameters params = {
+                settings.get_int_setting("matrix-mult-max-result-rows"),
+                settings.get_int_setting("matrix-mult-min-result-rows"),
+                settings.get_int_setting("matrix-mult-max-shared-dim"),
+                settings.get_int_setting("matrix-mult-min-shared-dim"),
+                settings.get_int_setting("matrix-mult-max-result-cols"),
+                settings.get_int_setting("matrix-mult-min-result-cols"),
+                settings.get_int_setting("matrix-mult-max-cell-value"),
+                settings.get_int_setting("matrix-mult-min-cell-value")
+            };
+            settings.print_verbose("\tmatrix-mult-max-result-rows = "  + std::to_string(params.max_result_rows));
+            settings.print_verbose("\tmatrix-mult-min-result-rows = "  + std::to_string(params.min_result_rows));
+            settings.print_verbose("\tmatrix-mult-max-shared-dim = "  + std::to_string(params.max_shared_dim));
+            settings.print_verbose("\tmatrix-mult-min-shared-dim = "  + std::to_string(params.min_shared_dim));
+            settings.print_verbose("\tmatrix-mult-max-result-cols = "  + std::to_string(params.max_result_cols));
+            settings.print_verbose("\tmatrix-mult-min-result-cols = "  + std::to_string(params.min_result_cols));
+            settings.print_verbose("\tmatrix-mult-max-cell-value = "  + std::to_string(params.max_cell_value));
+            settings.print_verbose("\tmatrix-mult-min-cell-value = "  + std::to_string(params.min_cell_value));
+
+            EXECUTE_PROCESS(matrix_multiplication)
+            return;
+        }
     };
 }
 

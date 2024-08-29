@@ -37,6 +37,7 @@ namespace mprgen
         IntegerGen(const params& _p);
         integer generate();
         integer generate_nonzero();
+        const params& get_params() const;
     };
 
     class DecimalGen : public Generator
@@ -58,5 +59,6 @@ namespace mprgen
         DecimalGen(const params& _p);
         decimal generate();
         decimal generate_nonzero();
+        const params& get_params() const;
     };
 } // namespace mprb

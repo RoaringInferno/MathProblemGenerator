@@ -22,13 +22,15 @@ enum process : unsigned char
 {
     polynomial_factoring,
     dot_product,
-    cross_product
+    cross_product,
+    matrix_multiplication
 };
 
 inline static const std::string PROCESS_SIGNATURE[] = {
     "polyfac",
     "dotprod",
-    "crossprod"
+    "crossprod",
+    "matrix-mult"
 };
 
 class ProcessStringHash
@@ -77,6 +79,7 @@ inline constexpr ProcessStringHash::type_t ProcessStringHash::hash_function(std:
     if (option == PROCESS_SIGNATURE[polynomial_factoring]) { return polynomial_factoring; }
     if (option == PROCESS_SIGNATURE[dot_product]) { return dot_product; }
     if (option == PROCESS_SIGNATURE[cross_product]) { return cross_product; }
+    if (option == PROCESS_SIGNATURE[matrix_multiplication]) { return matrix_multiplication; }
 
     return polynomial_factoring;
 }

@@ -3,6 +3,7 @@
 #include "polynomial-factoring.hpp"
 #include "dot-product.hpp"
 #include "cross-product.hpp"
+#include "matrix-multiplication.hpp"
 
 /*
 #pragma once
