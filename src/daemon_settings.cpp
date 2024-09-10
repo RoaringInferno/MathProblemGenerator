@@ -30,14 +30,16 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::int_value_t
     {H("crossprod-component-min"), -9}, // The smallest number that will appear as a vector component
 
     // Matrix Multiplication
-    {H("matrix-mult-max-result-rows"), 3}, // The largest number of rows that the result matrix can have
-    {H("matrix-mult-min-result-rows"), 1}, // The smallest number of rows that the result matrix can have
-    {H("matrix-mult-max-shared-dim"), 3}, // The largest number of columns that the first matrix can have, and the largest number of rows that the second matrix can have
-    {H("matrix-mult-min-shared-dim"), 1}, // The smallest number of columns that the first matrix can have, and the smallest number of rows that the second matrix can have
-    {H("matrix-mult-max-result-cols"), 3}, // The largest number of columns that the result matrix can have
-    {H("matrix-mult-min-result-cols"), 1}, // The smallest number of columns that the result matrix can have
-    {H("matrix-mult-max-cell-value"), 9}, // The largest number that will appear as a cell value in any matrix
-    {H("matrix-mult-min-cell-value"), -9}, // The smallest number that will appear as a cell value in any matrix
+    //{H("matrix-mult-result-rows-max"), 3}, // The largest number of rows that the result matrix can have
+    //{H("matrix-mult-result-rows-min"), 2}, // The smallest number of rows that the result matrix can have
+    //{H("matrix-mult-shared-dim-max"), 3}, // The largest number of columns that the first matrix can have, and the largest number of rows that the second matrix can have
+    //{H("matrix-mult-shared-dim-min"), 2}, // The smallest number of columns that the first matrix can have, and the smallest number of rows that the second matrix can have
+    //{H("matrix-mult-result-cols-max"), 3}, // The largest number of columns that the result matrix can have
+    //{H("matrix-mult-result-cols-min"), 1}, // The smallest number of columns that the result matrix can have
+    {H("matrix-mult-dim-max"), 3}, // The largest number of rows and columns that any matrix can have
+    {H("matrix-mult-dim-min"), 2}, // The smallest number of rows and columns that any matrix can have
+    {H("matrix-mult-cell-max"), 9}, // The largest number that will appear as a cell value in any matrix
+    {H("matrix-mult-cell-min"), -9}, // The smallest number that will appear as a cell value in any matrix
 
     // Threading Thresholds
     // The minimum number of problems being generated that the daemon will spawn a thread in parallel mode instead of series
@@ -54,7 +56,7 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
     {H("force-unthreaded"), false}, // Forces the program to generate in series. Conflicts with "force-threaded"
     
     {H("verbose"), false}, // Short: 'v'. The program will output a parse message for each argument. If this is off, the program will only output errors, and verbose messages will be written to a log file
-    {H("output-to-file"), true} // Short: 'f'. The program will output questions to 2 separate text files
+    {H("output-to-file"), false} // Short: 'f'. The program will output questions to 2 separate text files
 };
 
 #undef H

@@ -28,6 +28,7 @@ void mprgen::ask(const MathProblem &mp)
 void mprgen::ask(const std::vector<MathProblem> &mps)
 {
     // Ask every question
+    std::cout << "Problems:\n";
     for (int i = 0; i < mps.size(); i++) {
         std::cout << i + 1 << ". " << mps[i].get_problem() << std::endl;
     }
@@ -36,6 +37,7 @@ void mprgen::ask(const std::vector<MathProblem> &mps)
     std::cin.ignore();
 
     // Display all solutions
+    std::cout << "Solutions:\n";
     for (int i = 0; i < mps.size(); i++) {
         std::cout << i + 1 << ". " << mps[i].get_solution() << std::endl;
     }

@@ -156,7 +156,7 @@ std::vector<std::vector<std::string>> get_justified_matricies(const std::vector<
                 max_cell_length // The justified cell length
                 +cell_spacer.size() // The size of the cell spacer
             )
-                *cell_count-cell_spacer.size() // For each cell
+                *cell_count // For each cell
             -cell_spacer.size() // Remove the last cell spacer
             +row_start_delimiter.size() // The size of the row start delimiter
             +row_end_delimiter.size() // The size of the row end delimiter

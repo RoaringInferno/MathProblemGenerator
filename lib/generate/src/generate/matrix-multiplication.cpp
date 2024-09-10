@@ -2,6 +2,11 @@
 
 #include "math/matrix.hpp"
 
+namespace formatting
+{
+    const std::string matrix_spacer = "    ";
+};
+
 mprgen::MathProblem generate::matrix_multiplication::problem(const parameters &params)
 {
     mprgen::integer result_rows, shared_dim, result_cols;
@@ -22,12 +27,10 @@ mprgen::MathProblem generate::matrix_multiplication::problem(const parameters &p
     const size_t row_count = justified_matricies[0].size();
     for (size_t i = 0; i < row_count; i++)
     {
-        for (size_t j = 0; j < 2; j++) // Print the first two matricies
-        {
-            problem += justified_matricies[j][i];
-            problem += "\t";
-        }
-        problem.pop_back(); // Remove the last tab
+        // Print the first two matricies
+        problem += justified_matricies[0][i];
+        problem += formatting::matrix_spacer;
+        problem += justified_matricies[1][i];
         problem += "\n";
     }
     problem.pop_back(); // Remove the last newline
