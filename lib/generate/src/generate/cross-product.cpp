@@ -4,7 +4,9 @@
 
 mprgen::MathProblem generate::cross_product::problem(const parameters &params)
 {
-    std::array<mprgen::integer, 3> a, b, c;
+    mprgen::integer a[3];
+    mprgen::integer b[3];
+    mprgen::integer c[3];
 
     mprgen::IntegerGen gen({params.component_min, params.component_max});
 

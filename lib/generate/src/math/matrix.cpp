@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "math/matrix.hpp"
 
 #include "generate/number-gen.hpp"

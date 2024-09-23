@@ -6,13 +6,16 @@
 #include <string_view>
 
 #define EXECUTE_PROCESS(PROBLEM_NMSP)                                                                   \
-if (should_thread(process_signature, problem_count))                                                    \
+std::vector<generate::iterator_range_t> spawn_ranges;                                                   \
+if (should_thread(process_signature, problem_count, spawn_ranges))                                      \
 {                                                                                                       \
-    spawns.push_back(std::thread(generate::PROBLEM_NMSP::problem_set, params, spawn_range));            \
+    for (const auto& spawn_range : spawn_ranges) {                                                      \
+        spawns.push_back(std::thread(generate::PROBLEM_NMSP::problem_set, params, spawn_range));        \
+    }                                                                                                   \
 }                                                                                                       \
 else                                                                                                    \
 {                                                                                                       \
-    generate::PROBLEM_NMSP::problem_set(params, spawn_range);                                           \
+    generate::PROBLEM_NMSP::problem_set(params, spawn_ranges[0]);                                       \
 }
 
 void Daemon::spawn_process(std::string_view process_signature)
@@ -25,7 +28,6 @@ void Daemon::spawn_process(std::string_view process_signature)
 
     ProcessStringHash process_hash(process_signature);
     generate::problem_count_t problem_count = settings.get_int_setting("problem-count");
-    generate::iterator_range_t spawn_range = generate_spawn_range(problem_count);
 
 
     settings.print_verbose("Generating " + std::to_string(problem_count) + " \"" + std::string(process_signature) + "\" problem(s) with settings...");

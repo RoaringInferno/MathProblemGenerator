@@ -23,6 +23,8 @@ public:
 
     Matrix operator*(const Matrix& other) const;
 
+    void scramble(const unsigned int opcount, mprgen::IntegerGen& factor_gen);
+
     std::vector<std::vector<std::string>> to_string_justified_cells() const;
 };
 

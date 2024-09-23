@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string_view>
 #include <fstream>
+#include <filesystem>
 
 // Dialogues
 const std::string output_file_directory = "output/";
@@ -25,27 +26,52 @@ generate::iterator_range_t Daemon::generate_spawn_range(const generate::problem_
     return generate::iterator_range(*generated_range);
 }
 
-bool Daemon::should_thread(std::string_view process_signature, const generate::problem_count_t &problem_count)
+bool Daemon::should_thread(std::string_view process_signature, const generate::problem_count_t &problem_count, std::vector<generate::iterator_range_t> &spawn_ranges)
 {
+    const Daemon_settings::int_value_t threading_threshold = settings.get_int_setting(std::string(process_signature) + "-threading-threshold");
+
+    const auto add_spawn_range = [&]()
+    {
+        spawn_ranges.push_back(generate_spawn_range(problem_count));
+    };
+    const auto split_spawn_range = [&]()
+    {
+        const unsigned int spawn_count = problem_count / threading_threshold;
+        const unsigned int remainder = problem_count % threading_threshold;
+
+        spawn_ranges.reserve(spawn_count);
+        for (unsigned int i{0},r{0}; i < spawn_count; i++, r++)
+        {
+            spawn_ranges[i] = generate_spawn_range(0
+                + threading_threshold
+                + ((r < remainder) ? 1 : 0)
+            );
+        }
+    };
+
     bool force_threaded = settings.get_bool_setting("force-threaded"sv);
     bool force_unthreaded = settings.get_bool_setting("force-unthreaded"sv);
     if (force_threaded ^ force_unthreaded) // If they are different, then parse for which one is on
     {
         if (force_threaded) {
             settings.print_verbose(parallel_generation_verbose_dialogue + "(force_threaded)");
+            split_spawn_range();
             return true;
         }
         if (force_unthreaded) {
             settings.print_verbose(series_generation_verbose_dialogue + "(force_unthreaded)");
+            add_spawn_range();
             return false;
         }
     }
     // If the settings are the same, then ignore them
-    if (problem_count > settings.get_int_setting(std::string(process_signature) + "-threading-threshold")) {
+    if (problem_count > threading_threshold) {
         settings.print_verbose(parallel_generation_verbose_dialogue);
+        split_spawn_range();
         return true;
     }
     settings.print_verbose(series_generation_verbose_dialogue);
+    add_spawn_range();
     return false;
 }
 

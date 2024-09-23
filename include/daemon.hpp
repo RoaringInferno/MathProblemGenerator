@@ -53,7 +53,7 @@ private:
     Daemon_settings settings;
 private:
     generate::iterator_range_t generate_spawn_range(const generate::problem_count_t& problem_count);
-    bool should_thread(std::string_view process_signature, const generate::problem_count_t& problem_count);
+    bool should_thread(std::string_view process_signature, const generate::problem_count_t& problem_count, std::vector<generate::iterator_range_t>& spawn_ranges);
 public:
     Daemon() = default;
 

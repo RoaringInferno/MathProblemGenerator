@@ -1,6 +1,7 @@
 #include "daemon.hpp"
 
 #include <iostream>
+#include <filesystem>
 
 namespace filepath
 {
@@ -63,7 +64,7 @@ const std::unordered_map<SettingStringHash::type_t, Daemon_settings::bool_value_
 
 std::string Daemon_settings::generate_log_file_path()
 {
-    std::filesystem::create_directories(filepath::log_file_directory);
+    std::filesystem::create_directory(filepath::log_file_directory);
 
     return filepath::log_file_directory + filepath::log_file_name + timestamp.get_datetimestamp() + filepath::log_file_extension;
 }

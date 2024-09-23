@@ -1,3 +1,5 @@
+#include <unordered_map>
+
 #include "generate/polynomial-factoring.hpp"
 
 #include "generate/number-gen.hpp"
